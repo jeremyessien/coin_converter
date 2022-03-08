@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'coin.dart';
 import 'package:flutter/cupertino.dart';
-
+import 'dart:io'show Platform;
 class PriceScreen extends StatefulWidget {
   @override
   _PriceScreenState createState() => _PriceScreenState();
@@ -10,9 +10,10 @@ class PriceScreen extends StatefulWidget {
 class _PriceScreenState extends State<PriceScreen> {
   String chosenCurrency = 'NGN';
 
-  //For loop for DropDown Menu Items in the last Container (line 65)
-  List<DropdownMenuItem> getDropdownItem() {
+  //Drop Down Button for Android
+  DropdownMenuItem<String> getDropDownButton() {
     List<DropdownMenuItem<String>> dropDownItem = [];
+    //For loop for drop down button
     for (String curr in ListofCurrencies) {
       var newItem = DropdownMenuItem(
         child: Text(curr),
@@ -20,17 +21,41 @@ class _PriceScreenState extends State<PriceScreen> {
       );
       dropDownItem.add(newItem);
     }
-    return dropDownItem;
+    DropdownButton<String>(
+      value: chosenCurrency,
+      dropdownColor: Colors.lightBlueAccent,
+      //Called the for loop from line 12
+      items: dropDownItem,
+      onChanged: (value) {
+        setState(() {
+          chosenCurrency = value;
+        });
+      },
+    );
   }
 
-  List<Widget> getPickeritems() {
+  // Cupertino Picker for iOS
+  CupertinoPicker iOS(){
     List<Text> pickerItems = [];
     for (String curr in ListofCurrencies) {
       pickerItems.add(Text(curr));
     }
-    return pickerItems;
-  }
 
+   return CupertinoPicker(
+      backgroundColor: Colors.lightGreenAccent.shade200,
+      itemExtent: 32,
+      onSelectedItemChanged: (selectedIndex) {},
+      children: pickerItems,
+    );
+  }
+  Widget getPicker(){
+    if (Platform.isIOS){
+      return iOS();
+    }
+    else if (Platform.isAndroid){
+      return getDropDownButton();
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -67,26 +92,10 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightGreenAccent.shade200,
-            child: CupertinoPicker(
-              backgroundColor: Colors.lightGreenAccent.shade200,
-              itemExtent: 32,
-              onSelectedItemChanged: (selectedIndex) {},
-              children: getPickeritems(),
-            ),
+            child:getPicker(),
           ),
         ],
       ),
     );
   }
 }
-// DropdownButton<String>(
-// value: chosenCurrency,
-// dropdownColor: Colors.lightBlueAccent,
-// //Called the for loop from line 12
-// items: getDropdownItem(),
-// onChanged: (value) {
-// setState(() {
-// chosenCurrency = value;
-// });
-// },
-// ),
