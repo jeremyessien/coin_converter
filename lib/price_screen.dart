@@ -11,7 +11,7 @@ class _PriceScreenState extends State<PriceScreen> {
   String chosenCurrency = 'NGN';
 
   //Drop Down Button for Android
-  DropdownMenuItem<String> getDropDownButton() {
+  DropdownButton<String> getDropDownButton() {
     List<DropdownMenuItem<String>> dropDownItem = [];
     //For loop for drop down button
     for (String curr in ListofCurrencies) {
@@ -21,7 +21,7 @@ class _PriceScreenState extends State<PriceScreen> {
       );
       dropDownItem.add(newItem);
     }
-    DropdownButton<String>(
+    return DropdownButton<String>(
       value: chosenCurrency,
       dropdownColor: Colors.lightBlueAccent,
       //Called the for loop from line 12
@@ -48,14 +48,15 @@ class _PriceScreenState extends State<PriceScreen> {
       children: pickerItems,
     );
   }
-  Widget getPicker(){
-    if (Platform.isIOS){
-      return iOS();
-    }
-    else if (Platform.isAndroid){
-      return getDropDownButton();
-    }
-  }
+
+  // Widget getPicker(){
+  //   if (Platform.isIOS){
+  //     return iOS();
+  //   }
+  //   else if (Platform.isAndroid){
+  //     return getDropDownButton();
+  //   }
+  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -92,7 +93,8 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightGreenAccent.shade200,
-            child:getPicker(),
+            //Tenary Operator to check  if platform is iOS or Android
+            child:Platform.isIOS? iOS() : getDropDownButton(),
           ),
         ],
       ),
