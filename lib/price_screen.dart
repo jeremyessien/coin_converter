@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'coin.dart';
+import 'package:flutter/cupertino.dart';
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -22,11 +23,19 @@ class _PriceScreenState extends State<PriceScreen> {
     return dropDownItem;
   }
 
+  List<Widget> getPickeritems() {
+    List<Text> pickerItems = [];
+    for (String curr in ListofCurrencies) {
+      pickerItems.add(Text(curr));
+    }
+    return pickerItems;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('🤑 Coin Ticker'),
+        title: Text('Coin Converter'),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -58,16 +67,11 @@ class _PriceScreenState extends State<PriceScreen> {
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightGreenAccent.shade200,
-            child: DropdownButton<String>(
-              value: chosenCurrency,
-              dropdownColor: Colors.lightBlueAccent,
-              //Called the for loop from line 12
-              items: getDropdownItem(),
-              onChanged: (value) {
-                setState(() {
-                  chosenCurrency = value;
-                });
-              },
+            child: CupertinoPicker(
+              backgroundColor: Colors.lightGreenAccent.shade200,
+              itemExtent: 32,
+              onSelectedItemChanged: (selectedIndex) {},
+              children: getPickeritems(),
             ),
           ),
         ],
@@ -75,3 +79,14 @@ class _PriceScreenState extends State<PriceScreen> {
     );
   }
 }
+// DropdownButton<String>(
+// value: chosenCurrency,
+// dropdownColor: Colors.lightBlueAccent,
+// //Called the for loop from line 12
+// items: getDropdownItem(),
+// onChanged: (value) {
+// setState(() {
+// chosenCurrency = value;
+// });
+// },
+// ),
