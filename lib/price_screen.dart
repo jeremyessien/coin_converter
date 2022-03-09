@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'coin.dart';
 import 'package:flutter/cupertino.dart';
-import 'dart:io'show Platform;
+import 'dart:io' show Platform;
+
 class PriceScreen extends StatefulWidget {
   @override
   _PriceScreenState createState() => _PriceScreenState();
 }
 
 class _PriceScreenState extends State<PriceScreen> {
+
   String chosenCurrency = 'NGN';
 
   //Drop Down Button for Android
@@ -35,20 +37,20 @@ class _PriceScreenState extends State<PriceScreen> {
   }
 
   // Cupertino Picker for iOS
-  CupertinoPicker iOS(){
+  CupertinoPicker iOS() {
     List<Text> pickerItems = [];
     for (String curr in ListofCurrencies) {
       pickerItems.add(Text(curr));
     }
 
-   return CupertinoPicker(
+    return CupertinoPicker(
       backgroundColor: Colors.lightGreenAccent.shade200,
       itemExtent: 32,
       onSelectedItemChanged: (selectedIndex) {},
       children: pickerItems,
     );
   }
-
+  //Alternate method for choosing dropdown button/ cupertino picker for Android or iOS
   // Widget getPicker(){
   //   if (Platform.isIOS){
   //     return iOS();
@@ -94,7 +96,7 @@ class _PriceScreenState extends State<PriceScreen> {
             padding: EdgeInsets.only(bottom: 30.0),
             color: Colors.lightGreenAccent.shade200,
             //Tenary Operator to check  if platform is iOS or Android
-            child:Platform.isIOS? iOS() : getDropDownButton(),
+            child: Platform.isIOS ? iOS() : getDropDownButton(),
           ),
         ],
       ),
