@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'coin.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io' show Platform;
-import 'package:http/http.dart' as http;
+//import 'package:http/http.dart' as http;
 
 
 class PriceScreen extends StatefulWidget {
@@ -45,7 +45,6 @@ class _PriceScreenState extends State<PriceScreen> {
     for (String curr in ListofCurrencies) {
       pickerItems.add(Text(curr));
     }
-
     return CupertinoPicker(
       backgroundColor: Colors.lightGreenAccent.shade200,
       itemExtent: 32,
@@ -62,6 +61,17 @@ class _PriceScreenState extends State<PriceScreen> {
   //     return getDropDownButton();
   //   }
   // }
+  String btctousd ="?";
+  void getData() async{
+    try{
+      double data = await CoinData().getCoinData();
+      setState(() {
+        btctousd = data.toStringAsFixed(0);
+      });
+    } catch (e){
+      print (e);
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -83,7 +93,7 @@ class _PriceScreenState extends State<PriceScreen> {
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
                   child: Text(
-                    '1 BTC = ? USD',
+                    '1 BTC = $btctousd USD',
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 20.0,

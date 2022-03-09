@@ -34,15 +34,9 @@ const List<String> cryptoList = [
   'LTC',
 ];
 
-class CoinData {}
-class GetCoinAPi extends StatefulWidget {
-  @override
-  _GetCoinAPiState createState() => _GetCoinAPiState();
-}
-
-class _GetCoinAPiState extends State<GetCoinAPi> {
- Future getCoinData() async{
-   String coinApiUrl = "$coinApi";
+class CoinData {
+  Future getCoinData() async{
+    String coinApiUrl = "$coinApi";
     http.Response response = await http.get(coinApiUrl);
     if(response.statusCode == 200) {
       var jsonData = jsonDecode(response.body);
@@ -53,10 +47,4 @@ class _GetCoinAPiState extends State<GetCoinAPi> {
       print (response.statusCode);
     }
   }
-  @override
-  Widget build(BuildContext context) {
-    return Container();
-  }
 }
-
-
