@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'coin.dart';
 import 'package:flutter/cupertino.dart';
+import 'coin.dart';
 import 'dart:io' show Platform;
-//import 'package:http/http.dart' as http;
-
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -11,72 +9,73 @@ class PriceScreen extends StatefulWidget {
 }
 
 class _PriceScreenState extends State<PriceScreen> {
+  String selectedCurrency = 'USD';
 
-  String chosenCurrency = 'NGN';
-
-
-  //Drop Down Button for Android
-  DropdownButton<String> getDropDownButton() {
-    List<DropdownMenuItem<String>> dropDownItem = [];
-    //For loop for drop down button
-    for (String curr in ListofCurrencies) {
+  DropdownButton<String> androidDropdown() {
+    List<DropdownMenuItem<String>> dropdownItems = [];
+    for (String currency in ListofCurrencies) {
       var newItem = DropdownMenuItem(
-        child: Text(curr),
-        value: curr,
+        child: Text(currency),
+        value: currency,
       );
-      dropDownItem.add(newItem);
+      dropdownItems.add(newItem);
     }
+
     return DropdownButton<String>(
-      value: chosenCurrency,
-      dropdownColor: Colors.lightBlueAccent,
-      //Called the for loop from line 12
-      items: dropDownItem,
+      value: selectedCurrency,
+      items: dropdownItems,
       onChanged: (value) {
         setState(() {
-          chosenCurrency = value;
+          selectedCurrency = value;
         });
       },
     );
   }
 
-  // Cupertino Picker for iOS
-  CupertinoPicker iOS() {
+  CupertinoPicker iOSPicker() {
     List<Text> pickerItems = [];
-    for (String curr in ListofCurrencies) {
-      pickerItems.add(Text(curr));
+    for (String currency in ListofCurrencies) {
+      pickerItems.add(Text(currency));
     }
+
     return CupertinoPicker(
-      backgroundColor: Colors.lightGreenAccent.shade200,
-      itemExtent: 32,
-      onSelectedItemChanged: (selectedIndex) {},
+      backgroundColor: Colors.lightBlue,
+      itemExtent: 32.0,
+      onSelectedItemChanged: (selectedIndex) {
+        print(selectedIndex);
+      },
       children: pickerItems,
     );
   }
-  //Alternate method for choosing dropdown button/ cupertino picker for Android or iOS
-  // Widget getPicker(){
-  //   if (Platform.isIOS){
-  //     return iOS();
-  //   }
-  //   else if (Platform.isAndroid){
-  //     return getDropDownButton();
-  //   }
-  // }
-  String btctousd ="?";
-  void getData() async{
-    try{
+
+  //12. Create a variable to hold the value and use in our Text Widget. Give the variable a starting value of '?' before the data comes back from the async methods.
+  String bitcoinValueInUSD = '?';
+
+  //11. Create an async method here await the coin data from coin_data.dart
+  void getData() async {
+    try {
       double data = await CoinData().getCoinData();
+      //13. We can't await in a setState(). So you have to separate it out into two steps.
       setState(() {
-        btctousd = data.toStringAsFixed(0);
+        bitcoinValueInUSD = data.toStringAsFixed(0);
       });
-    } catch (e){
-      print (e);
+    } catch (e) {
+      print(e);
     }
   }
+
+  @override
+  void initState() {
+    super.initState();
+    //14. Call getData() when the screen loads up. We can't call CoinData().getCoinData() directly here because we can't make initState() async.
+    getData();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Coin Converter'),
+        title: Text('🤑 Coin Ticker'),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -85,31 +84,31 @@ class _PriceScreenState extends State<PriceScreen> {
           Padding(
             padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
             child: Card(
-              color: Colors.lightGreenAccent.shade200,
+              color: Colors.lightBlueAccent,
               elevation: 5.0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
               ),
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
-                  child: Text(
-                    '1 BTC = $btctousd USD',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 20.0,
-                      color: Colors.white,
-                    ),
+              child: Padding(
+                padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
+                child: Text(
+                  //15. Update the Text Widget with the data in bitcoinValueInUSD.
+                  '1 BTC = $bitcoinValueInUSD USD',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20.0,
+                    color: Colors.white,
                   ),
                 ),
               ),
             ),
+          ),
           Container(
             height: 150.0,
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
-            color: Colors.lightGreenAccent.shade200,
-            //Tenary Operator to check  if platform is iOS or Android
-            child: Platform.isIOS ? iOS() : getDropDownButton(),
+            color: Colors.lightBlue,
+            child: Platform.isIOS ? iOSPicker() : androidDropdown(),
           ),
         ],
       ),
