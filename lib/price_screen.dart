@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'coin.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:io' show Platform;
+import 'package:http/http.dart' as http;
+
 
 class PriceScreen extends StatefulWidget {
   @override
@@ -11,6 +13,7 @@ class PriceScreen extends StatefulWidget {
 class _PriceScreenState extends State<PriceScreen> {
 
   String chosenCurrency = 'NGN';
+
 
   //Drop Down Button for Android
   DropdownButton<String> getDropDownButton() {
@@ -77,19 +80,19 @@ class _PriceScreenState extends State<PriceScreen> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
               ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
-                child: Text(
-                  '1 BTC = ? USD',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.white,
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
+                  child: Text(
+                    '1 BTC = ? USD',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20.0,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
           Container(
             height: 150.0,
             alignment: Alignment.center,
