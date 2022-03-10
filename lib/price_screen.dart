@@ -11,12 +11,13 @@ class PriceScreen extends StatefulWidget {
 class _PriceScreenState extends State<PriceScreen> {
   String selectedCurrency = 'USD';
 
+  //Dropdown Button for Android
   DropdownButton<String> androidDropdown() {
     List<DropdownMenuItem<String>> dropdownItems = [];
-    for (String currency in ListofCurrencies) {
+    for (String curr in ListofCurrencies) {
       var newItem = DropdownMenuItem(
-        child: Text(currency),
-        value: currency,
+        child: Text(curr),
+        value: curr,
       );
       dropdownItems.add(newItem);
     }
@@ -32,14 +33,15 @@ class _PriceScreenState extends State<PriceScreen> {
     );
   }
 
+  //Cupertino Picker for iOS
   CupertinoPicker iOSPicker() {
     List<Text> pickerItems = [];
-    for (String currency in ListofCurrencies) {
-      pickerItems.add(Text(currency));
+    for (String curr in ListofCurrencies) {
+      pickerItems.add(Text(curr));
     }
 
     return CupertinoPicker(
-      backgroundColor: Colors.lightBlue,
+      backgroundColor: Colors.lightGreenAccent,
       itemExtent: 32.0,
       onSelectedItemChanged: (selectedIndex) {
         print(selectedIndex);
@@ -48,16 +50,26 @@ class _PriceScreenState extends State<PriceScreen> {
     );
   }
 
-  //12. Create a variable to hold the value and use in our Text Widget. Give the variable a starting value of '?' before the data comes back from the async methods.
-  String bitcoinValueInUSD = '?';
+  //Alternate method for choosing dropdown button/ cupertino picker for Android or iOS
+  // Widget getPicker(){
+  //   if (Platform.isIOS){
+  //     return iOS();
+  //   }
+  //   else if (Platform.isAndroid){
+  //     return getDropDownButton();
+  //   }
+  // }
 
-  //11. Create an async method here await the coin data from coin_data.dart
+  // Variable for text widget in line 96 which gets called before the data comes back from the async methods.
+  String BtcToUsd = '?';
+
+  //async method to wait for the coinData class from coin.dart
   void getData() async {
     try {
       double data = await CoinData().getCoinData();
       //13. We can't await in a setState(). So you have to separate it out into two steps.
       setState(() {
-        bitcoinValueInUSD = data.toStringAsFixed(0);
+        BtcToUsd = data.toStringAsFixed(0);
       });
     } catch (e) {
       print(e);
@@ -67,7 +79,7 @@ class _PriceScreenState extends State<PriceScreen> {
   @override
   void initState() {
     super.initState();
-    //14. Call getData() when the screen loads up. We can't call CoinData().getCoinData() directly here because we can't make initState() async.
+    //Call getData() when the screen loads up. We can't call CoinData().getCoinData() directly here because we can't make initState() async.
     getData();
   }
 
@@ -84,7 +96,7 @@ class _PriceScreenState extends State<PriceScreen> {
           Padding(
             padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
             child: Card(
-              color: Colors.lightBlueAccent,
+              color: Colors.lightGreenAccent,
               elevation: 5.0,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10.0),
@@ -92,8 +104,8 @@ class _PriceScreenState extends State<PriceScreen> {
               child: Padding(
                 padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
                 child: Text(
-                  //15. Update the Text Widget with the data in bitcoinValueInUSD.
-                  '1 BTC = $bitcoinValueInUSD USD',
+                  // Update the Text Widget with the data in the string BtcToUsd.
+                  '1 BTC = $BtcToUsd USD',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 20.0,
@@ -107,7 +119,8 @@ class _PriceScreenState extends State<PriceScreen> {
             height: 150.0,
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
-            color: Colors.lightBlue,
+            color: Colors.lightGreenAccent,
+            //Tenary operator for checking if the platform is iOS or Android. Chooses Cupertino Picker or Dropdown Button
             child: Platform.isIOS ? iOSPicker() : androidDropdown(),
           ),
         ],

@@ -35,6 +35,7 @@ const List<String> cryptoList = [
 ];
 
 class CoinData {
+  //Method for calling in the API from Coin API
   Future getCoinData() async{
     String coinApiUrl = "$coinApi";
     http.Response response = await http.get(coinApiUrl);
