@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 const coinApi = "https://rest.coinapi.io/v1/exchangerate/BTC/NGN?apiKey=C1F7F0CD-E0CC-4DB6-8324-554913FBE22C";
@@ -35,17 +34,20 @@ const List<String> cryptoList = [
 ];
 
 class CoinData {
-  //Method for calling in the API from Coin API
-  Future getCoinData() async{
-    String coinApiUrl = "$coinApi";
-    http.Response response = await http.get(coinApiUrl);
-    if(response.statusCode == 200) {
-      var jsonData = jsonDecode(response.body);
-      var coinPrice = jsonData;
-      return coinPrice;
+  Future getCoinData(String selectedCurrency) async {
+    Map<String, String> cryptoPrices = {};
+    for (String crypto in cryptoList) {
+      String requestURL = coinApi;
+      http.Response response = await http.get(requestURL);
+      if (response.statusCode == 200) {
+        var decodedData = jsonDecode(response.body);
+        double price = decodedData['rate'];
+        cryptoPrices[crypto] = price.toStringAsFixed(0);
+      } else {
+        print(response.statusCode);
+        throw 'Problem with the get request';
+      }
     }
-    else {
-      print (response.statusCode);
-    }
+    return cryptoPrices;
   }
 }

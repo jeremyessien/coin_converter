@@ -9,15 +9,14 @@ class PriceScreen extends StatefulWidget {
 }
 
 class _PriceScreenState extends State<PriceScreen> {
-  String selectedCurrency = 'USD';
+  String selectedCurrency = 'AUD';
 
-  //Dropdown Button for Android
   DropdownButton<String> androidDropdown() {
     List<DropdownMenuItem<String>> dropdownItems = [];
-    for (String curr in ListofCurrencies) {
+    for (String currency in ListofCurrencies) {
       var newItem = DropdownMenuItem(
-        child: Text(curr),
-        value: curr,
+        child: Text(currency),
+        value: currency,
       );
       dropdownItems.add(newItem);
     }
@@ -28,48 +27,41 @@ class _PriceScreenState extends State<PriceScreen> {
       onChanged: (value) {
         setState(() {
           selectedCurrency = value;
+          getData();
         });
       },
     );
   }
 
-  //Cupertino Picker for iOS
   CupertinoPicker iOSPicker() {
     List<Text> pickerItems = [];
-    for (String curr in ListofCurrencies) {
-      pickerItems.add(Text(curr));
+    for (String currency in ListofCurrencies) {
+      pickerItems.add(Text(currency));
     }
 
     return CupertinoPicker(
-      backgroundColor: Colors.lightGreenAccent,
+      backgroundColor: Colors.lightBlue,
       itemExtent: 32.0,
       onSelectedItemChanged: (selectedIndex) {
-        print(selectedIndex);
+        setState(() {
+          selectedCurrency = ListofCurrencies[selectedIndex];
+          getData();
+        });
       },
       children: pickerItems,
     );
   }
 
-  //Alternate method for choosing dropdown button/ cupertino picker for Android or iOS
-  // Widget getPicker(){
-  //   if (Platform.isIOS){
-  //     return iOS();
-  //   }
-  //   else if (Platform.isAndroid){
-  //     return getDropDownButton();
-  //   }
-  // }
+  Map<String, String> coinValues = {};
+  bool isWaiting = false;
 
-  // Variable for text widget in line 96 which gets called before the data comes back from the async methods.
-  String BtcToUsd = '?';
-
-  //async method to wait for the coinData class from coin.dart
   void getData() async {
+    isWaiting = true;
     try {
-      double data = await CoinData().getCoinData();
-      //13. We can't await in a setState(). So you have to separate it out into two steps.
+      var data = await CoinData().getCoinData(selectedCurrency);
+      isWaiting = false;
       setState(() {
-        BtcToUsd = data.toStringAsFixed(0);
+        coinValues = data;
       });
     } catch (e) {
       print(e);
@@ -79,51 +71,82 @@ class _PriceScreenState extends State<PriceScreen> {
   @override
   void initState() {
     super.initState();
-    //Call getData() when the screen loads up. We can't call CoinData().getCoinData() directly here because we can't make initState() async.
     getData();
+  }
+
+  Column makeCards() {
+    List<CryptoCard> cryptoCards = [];
+    for (String crypto in cryptoList) {
+      cryptoCards.add(
+        CryptoCard(
+          cryptoCurrency: crypto,
+          selectedCurrency: selectedCurrency,
+          value: isWaiting ? '?' : coinValues[crypto],
+        ),
+      );
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: cryptoCards,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Coin Converter'),
+        title: Text('🤑 Coin Ticker'),
       ),
       body: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          Padding(
-            padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
-            child: Card(
-              color: Colors.lightGreenAccent,
-              elevation: 5.0,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
-                child: Text(
-                  // Update the Text Widget with the data in the string BtcToUsd.
-                  '1 BTC = $BtcToUsd USD',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 20.0,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-            ),
-          ),
+          makeCards(),
           Container(
             height: 150.0,
             alignment: Alignment.center,
             padding: EdgeInsets.only(bottom: 30.0),
-            color: Colors.lightGreenAccent,
-            //Tenary operator for checking if the platform is iOS or Android. Chooses Cupertino Picker or Dropdown Button
+            color: Colors.lightBlue,
             child: Platform.isIOS ? iOSPicker() : androidDropdown(),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class CryptoCard extends StatelessWidget {
+  const CryptoCard({
+    this.value,
+    this.selectedCurrency,
+    this.cryptoCurrency,
+  });
+
+  final String value;
+  final String selectedCurrency;
+  final String cryptoCurrency;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.fromLTRB(18.0, 18.0, 18.0, 0),
+      child: Card(
+        color: Colors.lightBlueAccent,
+        elevation: 5.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: Padding(
+          padding: EdgeInsets.symmetric(vertical: 15.0, horizontal: 28.0),
+          child: Text(
+            '1 $cryptoCurrency = $value $selectedCurrency',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 20.0,
+              color: Colors.white,
+            ),
+          ),
+        ),
       ),
     );
   }
